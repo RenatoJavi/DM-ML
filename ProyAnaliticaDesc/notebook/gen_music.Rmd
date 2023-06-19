@@ -1,0 +1,133 @@
+---
+title: "Analítica Descriptiva"
+output:
+  html_document:
+    df_print: paged
+  word_document: default
+  pdf_document: default
+---
+
+(a) En la gráfica se observa una variedad de géneros musicales que más destacan hace algunos años hasta la actualidad.También se observa un gráfico de los artista de los cuales se referencio los datos.
+```{r musica, message=FALSE, warning=TRUE, paged.print=FALSE}
+
+
+ruta_archivo1 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaDesc/datos/artista_BadBunny.csv"
+ruta_archivo2 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaDesc/datos/artista_Maluma.csv"
+ruta_archivo3 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaDesc/datos/artista_Shakira.csv"
+ruta_archivo4 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaDesc/datos/artista_KarolG.csv"
+ruta_archivo5 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaDesc/datos/artista_JBalvin.csv"
+ruta_archivo6 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaDesc/datos/artista_Camilo.csv"
+ruta_archivo7 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaDesc/datos/artista_CarlosVives.csv"
+ruta_archivo8 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaDesc/datos/artista_DaddyYankee.csv"
+ruta_archivo9 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaDesc/datos/artista_MileyCyrus.csv" 
+ruta_archivo10 <-"C:/Proyectos ML/DM-ML/ProyAnaliticaDesc/datos/artista_BLACKPINK.csv"
+ruta_archivo11 <-"C:/Proyectos ML/DM-ML/ProyAnaliticaDesc/datos/artista_Rihanna.csv"
+ruta_archivo12 <-"C:/Proyectos ML/DM-ML/ProyAnaliticaDesc/datos/artista_Adele.csv"
+
+# Leer los archivos CSV y combinarlos en un solo dataframe
+library(dplyr)
+
+data_artistas <- bind_rows(
+  read.csv(ruta_archivo1),
+  read.csv(ruta_archivo2),
+  read.csv(ruta_archivo3),
+  read.csv(ruta_archivo4),
+   read.csv(ruta_archivo5),
+  read.csv(ruta_archivo6),
+  read.csv(ruta_archivo7),
+  read.csv(ruta_archivo8),
+  read.csv(ruta_archivo9),
+  read.csv(ruta_archivo10),
+  read.csv(ruta_archivo11),
+  read.csv(ruta_archivo12)
+  
+)
+
+datos_filtrados <- subset(data_artistas, !is.na(stilo) & stilo != "")#elimino las filas con solo ""
+
+data_artistas <-datos_filtrados
+
+library(dplyr)
+
+
+
+
+
+
+# Vector de nombres de artistas a filtrar
+nombres_artistas <- c("Bad Bunny","Maluma", "Shakira", "Karol G","J. Balvin","Camilo","Carlos Vives","Daddy Yankee","Miley Cyrus","Hannah Montana","Maroon 5","Morat","Blackpink")
+# Filtrar por nombres de artistas utilizando subset()
+data_filtro_nombres <- subset(data_artistas, Artista %in% nombres_artistas)
+#str(data_filtro_nombres)
+#head(data_filtro_nombres)
+
+
+library(ggplot2)
+ggplot(data_filtro_nombres, aes(x = Artista)) + 
+  geom_bar(fill = "lightblue", color = "black") +
+  labs(x = "Genero", y = "Year") +
+  ggtitle("Number por genero") +
+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  
+  library(ggplot2)
+ggplot(data_filtro_nombres, aes(x = stilo)) + #geom_point()
+
+  geom_bar(fill = "orange", color = "black", ) +
+  labs(x = "Genero", y = "Year") +
+  ggtitle("Number por genero") +
+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+library(png)
+
+imagen <- readPNG("C:/Proyectos ML/DM-ML/ProyAnaliticaDesc/datos/generosMusicales.png")
+#plot(1, 1, type = "n", xlab = "", ylab = "", xlim = c(0, 1), ylim = c(0, 1))
+#rasterImage(imagen, 0, 0, 1, 1)
+
+plot(1, type = "n", xlim = c(0, 2), ylim = c(0, 2), xlab = "", ylab = "")
+
+# Colocar la imagen en el gráfico con un tamaño más grande
+rasterImage(imagen, 0, 0, 2, 2)
+
+```
+
+
+(b) Se filtra considerando un mayor rango de estilos musicales para tener una mejor apreciaci?n de los g?neros que destacan.
+
+```{r estilos, message=FALSE, warning=FALSE}
+
+datos_filtrados <- subset(data_artistas, !is.na(stilo) & stilo != "")
+
+data_artistas <-datos_filtrados
+
+# Vector de nombres de artistas a filtrar
+nombres_artistas <- c("Bad Bunny","Maluma", "Shakira", "Karol G","J. Balvin","Camilo","Carlos Vives","Daddy Yankee","Miley Cyrus","Hannah Montana","Rihanna","Blackpink","Adele")
+# Filtrar por nombres de artistas utilizando subset()
+data_filtro_nombres <- subset(data_artistas, Artista %in% nombres_artistas)
+#str(data_filtro_nombres)
+#head(data_filtro_nombres)
+  
+
+library(ggplot2)
+ggplot(data_filtro_nombres, aes(x = Artista)) + #geom_point()
+
+  geom_bar(fill = "lightblue", color = "black") +
+  labs(x = "Artista", y = "Count") +
+  ggtitle("Audiencia del artista") +
+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ 
+# Diagrama de barras de G?neros musicales
+
+estilo2 <- datos_filtrados %>%group_by(stilo) %>%  filter(n() >= 4)
+#print(estilo2)
+condicion_x <- estilo2 %>% group_by(stilo)%>%
+  count() %>%  filter(n > 20) %>%  pull(stilo)
+estilo2 <- estilo2 %>% filter(stilo %in% condicion_x)
+
+
+ggplot(estilo2,aes(x=stilo))+ geom_bar()+
+    geom_bar(fill = "lightblue", color = "black") +
+  labs(x = "Estilo", y = "Count") +
+  ggtitle("Estilo de m?sica") +
+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
