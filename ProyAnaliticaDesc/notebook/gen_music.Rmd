@@ -1,7 +1,9 @@
 ---
 title: "Analítica Descriptiva"
 output:
-  pdf_document: default
+  pdf_document: 
+    toc_depth: 10
+    fig_width: 12
   word_document: default
   html_document:
     df_print: paged
@@ -48,63 +50,32 @@ data_artistas <-datos_filtrados
 
 library(dplyr)
 
-
-
-
-
-
 # Vector de nombres de artistas a filtrar
 nombres_artistas <- c("Bad Bunny","Maluma", "Shakira", "Karol G","J. Balvin",
-"Camilo","Carlos Vives","Daddy Yankee","Miley Cyrus","Hannah Montana","Maroon 5","Morat","Blackpink")
+                      "Camilo","Carlos Vives","Daddy Yankee","Miley Cyrus",
+                      "Hannah Montana","Maroon 5","Morat","Blackpink")
 # Filtrar por nombres de artistas utilizando subset()
 data_filtro_nombres <- subset(data_artistas, Artista %in% nombres_artistas)
 
 library(ggplot2)
 ggplot(data_filtro_nombres, aes(x = Artista)) + 
   geom_bar(fill = "lightblue", color = "black") +
-  labs(x = "Genero", y = "Year") +
-  ggtitle("Number por genero") +
- theme(axis.text.x = element_text(angle = 90, hjust = 1))
-  
-  library(ggplot2)
-ggplot(data_filtro_nombres, aes(x = stilo)) + #geom_point()
-
-  geom_bar(fill = "orange", color = "black", ) +
-  labs(x = "Genero", y = "Year") +
-  ggtitle("Number por genero") +
+  labs(x = "Artista", y = "Temas") +
+  ggtitle("Audiencia del artista") +
  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-library(png)
+estilo1 <- datos_filtrados %>%group_by(stilo) 
+#print(estilo2)
+condicion_x <- estilo1 %>% group_by(stilo)%>%
+  count() %>%  filter(n > 15) %>%  pull(stilo)
+estilo1 <- estilo1 %>% filter(stilo %in% condicion_x)
 
-imagen <- readPNG("C:/Proyectos ML/DM-ML/ProyAnaliticaDesc/datos/generosMusicales.png")
 
-
-# Leer la imagen
-
-
-# Obtener el tamaño de la ventana gráfica
-ventana <- par("usr")
-ancho_ventana <- ventana[2] - ventana[1]
-alto_ventana <- ventana[4] - ventana[3]
-
-# Calcular el factor de escala para ajustar la imagen
-factor_escala_ancho <- ancho_ventana / 1920
-factor_escala_alto <- alto_ventana / 1080
-factor_escala <- min(factor_escala_ancho, factor_escala_alto)
-
-# Calcular las nuevas dimensiones de la imagen
-ancho_nuevo <- 1920 * factor_escala
-alto_nuevo <- 1080 * factor_escala
-
-# Calcular las coordenadas para centrar la imagen
-x <- (ancho_ventana - ancho_nuevo) / 2\3
-y <- (alto_ventana - alto_nuevo) / 2
-
-# Crear el gráfico
-plot(1, type = "n", xlim = ventana[1:2], ylim = ventana[3:4], xlab = "", ylab = "")
-
-# Colocar la imagen en el gráfico con las nuevas dimensiones y coordenadas
-rasterImage(imagen, x, y, x + ancho_nuevo, y + alto_nuevo)
+ggplot(estilo1,aes(x=stilo))+ geom_bar()+
+    geom_bar(fill = "lightblue", color = "black") +
+  labs(x = "Estilo", y = "Número de canciones") +
+  ggtitle("Géneros musicales") +
+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 
 ```
@@ -119,7 +90,9 @@ datos_filtrados <- subset(data_artistas, !is.na(stilo) & stilo != "")
 data_artistas <-datos_filtrados
 
 # Vector de nombres de artistas a filtrar
-nombres_artistas <- c("Bad Bunny","Maluma", "Shakira", "Karol G","J. Balvin","Camilo","Carlos Vives","Daddy Yankee","Miley Cyrus","Hannah Montana","Rihanna","Blackpink","Adele")
+nombres_artistas <- c("Bad Bunny","Maluma", "Shakira", "Karol G","J. Balvin",
+                      "Camilo","Carlos Vives","Daddy Yankee","Miley Cyrus",
+                      "Hannah Montana","Rihanna","Blackpink","Adele")
 # Filtrar por nombres de artistas utilizando subset()
 data_filtro_nombres <- subset(data_artistas, Artista %in% nombres_artistas)
 #str(data_filtro_nombres)
@@ -127,26 +100,24 @@ data_filtro_nombres <- subset(data_artistas, Artista %in% nombres_artistas)
   
 
 library(ggplot2)
-ggplot(data_filtro_nombres, aes(x = Artista)) + #geom_point()
+ggplot(data_filtro_nombres, aes(x = Artista)) + 
 
   geom_bar(fill = "lightblue", color = "black") +
   labs(x = "Artista", y = "Temas") +
   ggtitle("Audiencia del artista") +
  theme(axis.text.x = element_text(angle = 90, hjust = 1))
  
-# Diagrama de barras de G?neros musicales
+# Diagrama de barras de Generos musicales
 
 estilo2 <- datos_filtrados %>%group_by(stilo) %>%  filter(n() >= 4)
 #print(estilo2)
 condicion_x <- estilo2 %>% group_by(stilo)%>%
-  count() %>%  filter(n > 20) %>%  pull(stilo)
+  count() %>%  filter(n > 30) %>%  pull(stilo)
 estilo2 <- estilo2 %>% filter(stilo %in% condicion_x)
-
 
 ggplot(estilo2,aes(x=stilo))+ geom_bar()+
     geom_bar(fill = "lightblue", color = "black") +
-  labs(x = "Estilo", y = "Count") +
-  ggtitle("Estilo de m?sica") +
+  labs(x = "Estilo", y = "Número de canciones") +
+  ggtitle("Géneros musicales") +
  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
-
