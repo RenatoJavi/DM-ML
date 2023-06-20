@@ -1,3 +1,4 @@
 # DM-ML
-Proyectos de aprendizaje en Data M. y Machine L. (Analíticas).
-Aprendizaje de herramientas para Ciencia de Datos
+Proyectos orientado a aplicar Analítica Descriptiva, analisis realizado
+a partir de un poblema planteado.
+

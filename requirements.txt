@@ -1,0 +1,4 @@
+Blibliotecas y lebrerias  utilizadas en el proyecto en R.
+1. library(dplyr)
+2. library(ggplot2)
+3. library(png)
