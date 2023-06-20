@@ -1,4 +1,3 @@
-# DM-ML
-Proyectos orientado a aplicar Analítica Descriptiva, analisis realizado
-a partir de un poblema planteado.
-
+## Proyecto de Analítica Descriptiva 2023-A
+- Este repositorio contiene un proyecto en el cual se plantea un problema y su solución aplicando conceptos de Data Mining. 
+- Desarrollo con R.
