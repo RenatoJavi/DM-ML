@@ -1,0 +1,132 @@
+---
+title: "Preprocesamiento AQI"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+
+
+
+
+(a) Limpiar los registros, guardar en un nuevo archivo .csv
+```{r}
+library(dplyr)
+library(tidyr)
+
+data <- read.csv("C:/csv/PRSA_Data_20130301-20170228/PRSA_Data_Aotizhongxin_20130301-20170228.csv", header = TRUE, stringsAsFactors = FALSE)
+
+datos_limpios<- data[complete.cases(data),]
+head(datos_limpios,5)
+
+# Combinar las columnas "year", "month" y "day" en una columna de fecha
+datos_limpios <- datos_limpios %>% 
+  unite(fecha, year, month, day, sep = "-")
+
+
+# Guardar los datos actualizados en otro archivo CSV
+write.csv(datos_limpios, file = "C:/csv/archivo_actualizado1.csv", row.names = FALSE)
+
+# Confirmar que se ha guardado correctamente
+cat("Los datos se han guardado en 'archivo_actualizado1.csv'")
+
+ #datos_fecha <- read.csv("C:/csv/archivo_actualizado1.csv")
+
+
+```
+
+
+
+
+
+(b) Agrupar por fecha los gases.
+```{r}
+library(dplyr)
+
+datos_fecha <- read.csv("C:/csv/archivo_actualizado1.csv")
+
+# Calcular la media de SO2, NO2 y PM10 agrupados por día
+mean_so2 <- datos_fecha %>%   group_by(station, fecha) %>%   summarise(mean_so2 = mean(SO2), .groups= 'drop')
+
+mean_no2 <- datos_fecha %>%   group_by(station, fecha) %>%   summarise(mean_no2 = mean(NO2), .groups= 'drop')
+
+mean_pm10 <- datos_fecha %>%   group_by(station, fecha) %>%   summarise(mean_pm10 = mean(PM10), .groups= 'drop')
+
+# Calcular el valor maximo de C0, o3
+max_CO <- datos_fecha %>% group_by(station, fecha) %>% summarise(CO = max(CO), .groups= 'drop')
+max_O3 <- datos_fecha %>% group_by(station, fecha) %>% summarise(O3 = max(O3), .groups= 'drop')
+
+#...................................................
+
+calculate_AQI_component <- function(concentration, pollutant) {
+   if (pollutant == "PM10") {
+      breakpoints <- c(0, 54, 154, 254, 354, 424, 504, 604)
+   } else if (pollutant == "SO2") {
+      breakpoints <- c(0, 91.7, 196.5, 484.7, 796.48, 1582.48, 2630.48)
+   } else if (pollutant == "NO2") {
+      breakpoints <- c(0, 99.64, 188, 676.8, 1220.12, 2348.12, 3852.12)
+   } else if (pollutant == "CO") {
+      breakpoints <- c(0, 5060, 10810, 14260, 17710, 34960, 57960)
+   } else if (pollutant == "O3") {
+      breakpoints <- c(0, 105.84, 137.2, 166.6, 205.8, 392, 604)
+   } else {
+      return(rep("Invalid pollutant", length(concentration)))
+   }
+   
+   index <- c(0, 50, 100, 150, 200, 300, 400, 500)
+
+   aqi <- rep(NA, length(concentration))
+   for (i in 1:(length(breakpoints) - 1)) {
+      mask <- concentration >= breakpoints[i] & concentration <= breakpoints[i + 1]
+      aqi[mask] <- ((index[i + 1] - index[i]) / (breakpoints[i + 1] - breakpoints[i])) * (concentration[mask] - breakpoints[i]) + index[i]
+   }
+
+   aqi[is.na(aqi)] <- "Out of range"
+   return(round(as.numeric(aqi)))
+}
+
+#......................Calculo el evalor del AQI.............................      
+   
+aqi_so2 <- calculate_AQI_component(mean_so2$mean_so2, "SO2")
+aqi_no2 <- calculate_AQI_component(mean_no2$mean_no2, "NO2")
+aqi_pm10 <- calculate_AQI_component(mean_pm10$mean_pm10, "PM10")
+aqi_CO <- calculate_AQI_component(max_CO$CO, "CO")
+aqi_O3 <- calculate_AQI_component(max_O3$O3, "O3")
+
+
+# Crear un data frame para almacenar los resultados del AQI
+aqi_data <- data.frame( fecha = mean_so2$fecha, AQI_SO2 = aqi_so2, AQI_NO2 = aqi_no2, AQI_PM10 = aqi_pm10, AQI_CO = aqi_CO, AQI_O3 = aqi_O3 , ciudad=mean_no2$station  )
+
+# Imprimir el data frame con los resultados del AQI
+#print(aqi_data)
+
+
+
+
+df_datos <- aqi_data %>%
+  rowwise() %>%
+  mutate(AQI = max(c( AQI_PM10,AQI_SO2, AQI_NO2,AQI_CO,AQI_O3)))
+ # ungroup() 
+
+write.csv(df_datos, file = "C:/Proyecto AQI/datos/calidad_aire3.csv", row.names = FALSE)
+
+
+
+niveles <- c(0, 50, 100, 150, 200, 250, 300, 600)
+labels <- c('Excelent', 'Good', 'Slightly Polluted', 'Lightly Polluted', 'Moderately Polluted', 'Heavily Polluted', 'Severely Polluted')
+
+aqi_data$Nivel_Aire <- cut(df_datos$AQI,breaks = niveles, labels = labels)
+
+nuevo_df <- df_datos %>%
+  mutate(Nivel_Aire = cut(AQI, breaks = niveles, labels = labels))
+write.csv(nuevo_df, file = "C:/Proyecto AQI/datos/calidad_aire4.csv", row.names = FALSE)
+head(nuevo_df,4)
+
+```
+
+
+
+
+
+
+ 
