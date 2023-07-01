@@ -1,3 +1,7 @@
-## Proyecto de Analítica Descriptiva 2023-A
-- Este repositorio contiene un proyecto en el cual se plantea un problema y su solución aplicando conceptos de Data Mining. 
-- Desarrollo con R.
+## Proyectos Data Mining y Machine Learning 2023-A
+ Este repositorio contiene:
+(a) Proyecto de Analítica Descriptiva
+(b) Proyecto de Analítica Prescriptiva
+
+- Desarrollado con R.
+- Desarrollado con Python
