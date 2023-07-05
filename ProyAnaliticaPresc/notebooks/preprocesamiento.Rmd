@@ -120,13 +120,68 @@ aqi_data$Nivel_Aire <- cut(df_datos$AQI,breaks = niveles, labels = labels)
 nuevo_df <- df_datos %>%
   mutate(Nivel_Aire = cut(AQI, breaks = niveles, labels = labels))
 write.csv(nuevo_df, file = "C:/Proyecto AQI/datos/calidad_aire4.csv", row.names = FALSE)
-head(nuevo_df,4)
+head(nuevo_df,10)
 
 ```
 
 
 
+(c) Archivos generales a un solo archivo
+```{r}
+ruta_archivo1 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaPresc/datos/PRSA_Data_Aotizhongxin_20130301-20170228.csv " 
+ruta_archivo2 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaPresc/datos/PRSA_Data_Changping_20130301-20170228.csv" 
+ruta_archivo3 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaPresc/datos/PRSA_Data_Dingling_20130301-20170228.csv"
+ruta_archivo4 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaPresc/datos/PRSA_Data_Dongsi_20130301-20170228.csv " 
+ruta_archivo5 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaPresc/datos/PRSA_Data_Guanyuan_20130301-20170228.csv " 
+ruta_archivo6 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaPresc/datos/PRSA_Data_Gucheng_20130301-20170228.csv" 
+ruta_archivo7 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaPresc/datos/PRSA_Data_Huairou_20130301-20170228.csv" 
+ruta_archivo8 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaPresc/datos/PRSA_Data_Nongzhanguan_20130301-20170228.csv" 
+ruta_archivo9 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaPresc/datos/PRSA_Data_Shunyi_20130301-20170228.csv " 
+ruta_archivo10 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaPresc/datos/PRSA_Data_Tiantan_20130301-20170228.csv" 
+ruta_archivo11 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaPresc/datos/PRSA_Data_Wanliu_20130301-20170228.csv" 
+ruta_archivo12 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaPresc/datos/PRSA_Data_Wanshouxigong_20130301-20170228.csv " 
+
+library(dplyr)
+data_aire <- bind_rows(
+read.csv(ruta_archivo1),
+read.csv(ruta_archivo2),
+read.csv(ruta_archivo3),
+read.csv(ruta_archivo4),
+read.csv(ruta_archivo5),
+read.csv(ruta_archivo6),
+read.csv(ruta_archivo7),
+read.csv(ruta_archivo8),
+read.csv(ruta_archivo9),
+read.csv(ruta_archivo10),
+read.csv(ruta_archivo11),
+read.csv(ruta_archivo12)
+)
+
+datos_consolidados <- data_aire[complete.cases(data_aire),]
 
 
+```
+repositorio 
+```{r}
 
+library(googledrive)
+
+# Autenticar y acceder a la unidad de Google Drive
+drive_auth()
+drive_find(n_max = 10)  # Listar los archivos en Google Drive (hasta 10)
+
+# Leer un archivo CSV de Google Drive
+archivo <- drive_get(file = "ruta_del_archivo.csv")
+datos <- read.csv(archivo)
+
+# Realizar operaciones con los datos...
+
+# Escribir un archivo CSV en Google Drive
+write.csv(datos, file = " https://drive.google.com/file/d/1U4_wdgv9kOctFlnK1DMUxbOPTfLfAywF/view?usp=drive_link")
+
+# Cerrar la sesión de autenticación
+drive_deauth()
+
+
+```
  

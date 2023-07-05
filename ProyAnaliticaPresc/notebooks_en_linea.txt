@@ -6,7 +6,7 @@ Integrantes:
 Notebooks:
 
 	Enlace de procesamiento de datos  esta en gogle colab:
-	https://colab.research.google.com/drive/1mPzumY82SHW-6oJCdVWWknkO-IvVf_Q1?usp=sharing
+	https://colab.research.google.com/drive/11sffGwW9KhfTgMDiytFa94tVQHGkzYS6?usp=sharing
 
 	Enlace del modelado Predictivo: 
 	https://colab.research.google.com/drive/1eN_hZJ6hDDDxjEQDSYSqAPWFhkzB24JT?usp=sharing
