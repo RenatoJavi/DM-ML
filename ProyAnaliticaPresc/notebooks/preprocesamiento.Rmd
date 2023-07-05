@@ -11,7 +11,7 @@ output:
 
 (a) Limpiar los registros, guardar en un nuevo archivo .csv
 ```{r}
-library(dplyr)
+#library(dplyr)
 library(tidyr)
 
 data <- read.csv("C:/csv/PRSA_Data_20130301-20170228/PRSA_Data_Aotizhongxin_20130301-20170228.csv", header = TRUE, stringsAsFactors = FALSE)
@@ -41,7 +41,7 @@ cat("Los datos se han guardado en 'archivo_actualizado1.csv'")
 
 (b) Agrupar por fecha los gases.
 ```{r}
-library(dplyr)
+#library(dplyr)
 
 datos_fecha <- read.csv("C:/csv/archivo_actualizado1.csv")
 
@@ -108,7 +108,7 @@ df_datos <- aqi_data %>%
   mutate(AQI = max(c( AQI_PM10,AQI_SO2, AQI_NO2,AQI_CO,AQI_O3)))
  # ungroup() 
 
-write.csv(df_datos, file = "C:/Proyecto AQI/datos/calidad_aire3.csv", row.names = FALSE)
+#write.csv(df_datos, file = "C:/Proyecto AQI/datos/calidad_aire3.csv", row.names = FALSE)
 
 
 
@@ -119,14 +119,15 @@ aqi_data$Nivel_Aire <- cut(df_datos$AQI,breaks = niveles, labels = labels)
 
 nuevo_df <- df_datos %>%
   mutate(Nivel_Aire = cut(AQI, breaks = niveles, labels = labels))
-write.csv(nuevo_df, file = "C:/Proyecto AQI/datos/calidad_aire4.csv", row.names = FALSE)
+
+write.csv(nuevo_df, file = "C:/Proyecto AQI/datos/calidad_aire_Aotizhongxin.csv", row.names = FALSE)
 head(nuevo_df,10)
 
 ```
 
 
 
-(c) Archivos generales a un solo archivo
+(c) Archivo consolidado de todas las estaciones a un solo archivo
 ```{r}
 ruta_archivo1 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaPresc/datos/PRSA_Data_Aotizhongxin_20130301-20170228.csv " 
 ruta_archivo2 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaPresc/datos/PRSA_Data_Changping_20130301-20170228.csv" 
@@ -158,30 +159,26 @@ read.csv(ruta_archivo12)
 )
 
 datos_consolidados <- data_aire[complete.cases(data_aire),]
+#library(dplyr)
+library(tidyr)
+
+#data <- read.csv("C:/csv/PRSA_Data_20130301-20170228/PRSA_Data_Aotizhongxin_20130301-20170228.csv", header = TRUE, stringsAsFactors = FALSE)
+
+
+# Combinar las columnas "year", "month" y "day" en una columna de fecha
+datos_consolidados <- datos_consolidados %>% 
+  unite(fecha, year, month, day, sep = "-")
+
+
+# Guardar los datos actualizados en otro archivo CSV
+write.csv(datos_consolidados, file = "C:/csv/archivo_consolidada.csv", row.names = FALSE)
+
+# Confirmar que se ha guardado correctamente
+cat("Los datos se han guardado en 'archivo_consolidado.csv'")
+
+ #datos_fecha <- read.csv("C:/csv/archivo_actualizado1.csv")
 
 
 ```
-repositorio 
-```{r}
 
-library(googledrive)
-
-# Autenticar y acceder a la unidad de Google Drive
-drive_auth()
-drive_find(n_max = 10)  # Listar los archivos en Google Drive (hasta 10)
-
-# Leer un archivo CSV de Google Drive
-archivo <- drive_get(file = "ruta_del_archivo.csv")
-datos <- read.csv(archivo)
-
-# Realizar operaciones con los datos...
-
-# Escribir un archivo CSV en Google Drive
-write.csv(datos, file = " https://drive.google.com/file/d/1U4_wdgv9kOctFlnK1DMUxbOPTfLfAywF/view?usp=drive_link")
-
-# Cerrar la sesión de autenticación
-drive_deauth()
-
-
-```
  
