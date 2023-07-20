@@ -1,0 +1,1 @@
+El entorno virtual esta configurado en otra carpeta.
