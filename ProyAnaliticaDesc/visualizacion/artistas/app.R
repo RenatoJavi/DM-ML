@@ -1,16 +1,11 @@
----
-title: "Analítica Descriptiva"
-output:
-  pdf_document: 
-    toc_depth: 10
-    fig_width: 12
-  word_document: default
-  html_document:
-    df_print: paged
----
-
-(a) En la gráfica se observa una variedad de géneros musicales que más destacan hace algunos años hasta la actualidad.También se observa un gráfico de los artista de los cuales se referencio los datos.
-```{r musica, message=FALSE, warning=TRUE, paged.print=FALSE}
+#
+# This is a Shiny web application. You can run the application by clicking
+# the 'Run App' button above.
+#
+# Find out more about building applications with Shiny here:
+#
+#    http://shiny.rstudio.com/
+#
 
 
 ruta_archivo1 <- "C:/Proyectos ML/DM-ML/ProyAnaliticaDesc/datos/artista_BadBunny.csv"
@@ -34,7 +29,7 @@ data_artistas <- bind_rows(
   read.csv(ruta_archivo2),
   read.csv(ruta_archivo3),
   read.csv(ruta_archivo4),
-   read.csv(ruta_archivo5),
+  read.csv(ruta_archivo5),
   read.csv(ruta_archivo6),
   read.csv(ruta_archivo7),
   read.csv(ruta_archivo8),
@@ -62,7 +57,7 @@ ggplot(data_filtro_nombres, aes(x = Artista)) +
   geom_bar(fill = "lightblue", color = "black") +
   labs(x = "Artista", y = "Temas") +
   ggtitle("Audiencia del artista") +
- theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 estilo1 <- datos_filtrados %>%group_by(stilo) 
 #print(estilo2)
@@ -72,54 +67,44 @@ estilo1 <- estilo1 %>% filter(stilo %in% condicion_x)
 
 
 ggplot(estilo1,aes(x=stilo))+ geom_bar()+
-    geom_bar(fill = "lightblue", color = "black") +
-  labs(x = "Estilo", y = "Número de canciones") +
-  ggtitle("Géneros musicales") +
- theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
-
-```
-
-
-(b) Se filtra considerando un mayor rango de estilos musicales para tener una mejor apreciaci?n de los g?neros que destacan.
-
-```{r estilos, message=FALSE, warning=FALSE}
-
-datos_filtrados <- subset(data_artistas, !is.na(stilo) & stilo != "")
-
-data_artistas <-datos_filtrados
-
-# Vector de nombres de artistas a filtrar
-nombres_artistas <- c("Bad Bunny","Maluma", "Shakira", "Karol G","J. Balvin",
-                      "Camilo","Carlos Vives","Daddy Yankee","Miley Cyrus",
-                      "Hannah Montana","Rihanna","Blackpink","Adele")
-# Filtrar por nombres de artistas utilizando subset()
-data_filtro_nombres <- subset(data_artistas, Artista %in% nombres_artistas)
-#str(data_filtro_nombres)
-#head(data_filtro_nombres)
-  
-
-library(ggplot2)
-ggplot(data_filtro_nombres, aes(x = Artista)) + 
-
   geom_bar(fill = "lightblue", color = "black") +
-  labs(x = "Artista", y = "Temas") +
-  ggtitle("Audiencia del artista") +
- theme(axis.text.x = element_text(angle = 90, hjust = 1))
- 
-# Diagrama de barras de Generos musicales
-
-estilo2 <- datos_filtrados %>%group_by(stilo) %>%  filter(n() >= 4)
-#print(estilo2)
-condicion_x <- estilo2 %>% group_by(stilo)%>%
-  count() %>%  filter(n > 30) %>%  pull(stilo)
-estilo2 <- estilo2 %>% filter(stilo %in% condicion_x)
-
-ggplot(estilo2,aes(x=stilo))+ geom_bar()+
-    geom_bar(fill = "lightblue", color = "black") +
   labs(x = "Estilo", y = "Número de canciones") +
   ggtitle("Géneros musicales") +
- theme(axis.text.x = element_text(angle = 90, hjust = 1))
-```
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 
+
+
+
+
+library(shiny)
+# Importar datos y resultados desde el archivo .Rmd
+#knitr::purl("gen_music.Rmd", output = "app.R")
+
+
+# Define UI for application that draws a histogram
+ui <- fluidPage(
+  # Application title
+  titlePanel("Géneros musicales"),
+ 
+)
+
+
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+  # Render the ggplot plot
+  output$ggplotPlot <- renderPlot({
+    estilo1 <- data.frame(estilo = c("Rock", "Pop", "Hip-hop", "Electrónica", "Jazz"),
+                          cantidad = c(10, 20, 15, 12, 8))
+    
+    ggplot(estilo1, aes(x = estilo)) +
+      geom_bar(fill = "lightblue", color = "black") +
+      labs(x = "Estilo", y = "Número de canciones") +
+      ggtitle("Géneros musicales") +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  })
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)

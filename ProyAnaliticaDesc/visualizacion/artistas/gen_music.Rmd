@@ -122,4 +122,24 @@ ggplot(estilo2,aes(x=stilo))+ geom_bar()+
  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
+jdsjdhjd
+```{r}
+# Cargar la librería 'mlbench' si no está instalada
+if (!require(mlbench)) {
+  install.packages("mlbench")
+  library(mlbench)
+}
 
+# Cargar el conjunto de datos "California Housing"
+data(CaliforniaHousing)
+
+# Crear un dataframe con los datos X
+X <- as.data.frame(CaliforniaHousing[, -9]) # Excluir la última columna (target)
+
+# Crear una serie con los datos de la variable objetivo y
+y <- CaliforniaHousing[, 9] # Última columna (target)
+
+
+
+
+```
